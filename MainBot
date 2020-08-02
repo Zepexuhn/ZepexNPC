@@ -1,0 +1,137 @@
+import discord
+import random
+import time
+import asyncio
+from discord.ext import commands
+import aiohttp
+import json
+import os
+import lavalink
+from discord import utils
+
+TOKEN = ""
+
+bot = commands.Bot(command_prefix = '~')
+
+@bot.event
+async def on_ready():
+    print("Bot is Online")
+    await bot.change_presence(activity=discord.Game(name="Music is being Added!"))
+    bot.load_extension('cogs.music')
+
+@bot.command()
+async def test(ctx):
+    await ctx.send('Test Passed')
+
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f'Pong! {round(bot.latency * 1000)}ms')
+
+@bot.command()
+async def d4(ctx):
+    responses = [1,2,3,4]
+    await ctx.send(random.choice(responses))
+    print (f"d4 result {random.choice(responses)}")
+
+@bot.command()
+async def d6(ctx):
+    responses = [1,2,3,4,5,6]
+    await ctx.send(random.choice(responses))
+    print(f"d6 result {random.choice(responses)}")
+
+@bot.command()
+async def d10(ctx):
+    responses = [1,2,3,4,5,6,7,8,9,10]
+    await ctx.send(random.choice(responses))
+    print(f"d10 result {random.choice(responses)}")
+
+@bot.command()
+async def d12(ctx):
+    responses = [1,2,3,4,5,6,7,8,9,10,11,12]
+    await ctx.send(random.choice(responses))
+    print(f"d12 result {random.choice(responses)}")
+
+@bot.command()
+async def d20(ctx):
+    responses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+    await ctx.send(random.choice(responses))
+    print(f"d20 result {random.choice(responses)}")
+
+@bot.command()
+async def d100(ctx):
+    responses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
+    await ctx.send(random.choice(responses))
+    print(f"d100 result {random.choice(responses)}")
+
+@bot.event
+async def on_member_join(member):
+    for channel in member.guild.channels:
+        if str(channel) == "new-joins-and-boosts":
+            await channel.send(f"""Welcome to the server {member.mention}! Please read the rules and get your roles at the roles channel! """)
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+    if message_id == 738557579659313232:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'destiny':
+            role = discord.utils.get(guild.roles, name='MMO Player')
+        elif payload.emoji.name == 'RGun':
+            role = discord.utils.get(guild.roles, name='Rainbow Six Siege Player')
+        elif payload.emoji.name == 'Grass_Block':
+            role = discord.utils.get(guild.roles, name='Minecraft Player')
+        elif payload.emoji.name == 'ar12lol':
+            role = discord.utils.get(guild.roles, name='MOBA Player')
+        elif payload.emoji.name == 'DefaultAnna':
+            role = discord.utils.get(guild.roles, name='Battle Royale Player')
+        elif payload.emoji.name == 'tank':
+            role = discord.utils.get(guild.roles, name='Wargaming Games')
+        elif payload.emoji.name == 'Checkmark':
+            role = discord.utils.get(guild.roles, name='Person')
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.add_roles(role)
+                print(f"{role} Added to {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    message_id = payload.message_id
+    if message_id == 738557579659313232:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'destiny':
+            role = discord.utils.get(guild.roles, name='MMO Player')
+        elif payload.emoji.name == 'RGun':
+            role = discord.utils.get(guild.roles, name='Rainbow Six Siege Player')
+        elif payload.emoji.name == 'Grass_Block':
+            role = discord.utils.get(guild.roles, name='Minecraft Player')
+        elif payload.emoji.name == 'ar12lol':
+            role = discord.utils.get(guild.roles, name='MOBA Player')
+        elif payload.emoji.name == 'DefaultAnna':
+            role = discord.utils.get(guild.roles, name='Battle Royale Player')
+        elif payload.emoji.name == 'tank':
+            role = discord.utils.get(guild.roles, name='Wargaming Games')
+        elif payload.emoji.name == 'Checkmark':
+            role = discord.utils.get(guild.roles, name='Person')
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.remove_roles(role)
+                print(f"{role} Removed from {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+
+bot.run(TOKEN)
