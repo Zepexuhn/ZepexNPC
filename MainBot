@@ -8,60 +8,100 @@ import json
 import os
 import lavalink
 from discord import utils
+from discord import Embed
 
-TOKEN = ""
+TOKEN = open('token.txt', "r").read()
 
-bot = commands.Bot(command_prefix = '~')
+bot = commands.Bot(command_prefix='~', case_insensitive=True, help_command=None)
+
+
+
 
 @bot.event
 async def on_ready():
     print("Bot is Online")
-    await bot.change_presence(activity=discord.Game(name="Music is being Added!"))
+    await bot.change_presence(activity=discord.Game(name="with Zepex's Code"))
     bot.load_extension('cogs.music')
+
+
+@bot.command()
+async def help(ctx):
+    await ctx.send("~help for help \n ~test - a test command \n ~ping - gives ping to bot \n ~coin - flips a coin"
+                   "\n ~d4 - rolls a d4 \n ~d6 - rolls a d6 (normal die) \n ~d10 - rolls a d10 \n ~d12 - rolls a d12 "
+                   "\n ~d20 - rolls a d20 \n ~d100 - rolls a d100 \n ~join - bot will join VC and unpause queue if any)" 
+                   "\n ~play - bot will join vc and start playing song \n ~skip - bot will skip currently playing song"
+                   "\n ~leave - bot will leave vc it is in and pause queue")
+
 
 @bot.command()
 async def test(ctx):
-    await ctx.send('Test Passed')
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    await ctx.send(f'{member.mention} Test Passed')
+
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Pong! {round(bot.latency * 1000)}ms')
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    await ctx.send(f'Pong! Latency to {member.mention} is {round(bot.latency * 1000)}ms')
+
+
+@bot.command()
+async def coin(ctx):
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = ["Heads", "Tails"]
+    await ctx.send(f'{member.mention} the coin landed on {random.choice(responses)}!')
+
 
 @bot.command()
 async def d4(ctx):
-    responses = [1,2,3,4]
-    await ctx.send(random.choice(responses))
-    print (f"d4 result {random.choice(responses)}")
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [1, 2, 3, 4]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
+    print(f"d6 result {random.choice(responses)}")
+
 
 @bot.command()
 async def d6(ctx):
-    responses = [1,2,3,4,5,6]
-    await ctx.send(random.choice(responses))
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [1, 2, 3, 4, 5, 6]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
     print(f"d6 result {random.choice(responses)}")
+
 
 @bot.command()
 async def d10(ctx):
-    responses = [1,2,3,4,5,6,7,8,9,10]
-    await ctx.send(random.choice(responses))
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
     print(f"d10 result {random.choice(responses)}")
+
 
 @bot.command()
 async def d12(ctx):
-    responses = [1,2,3,4,5,6,7,8,9,10,11,12]
-    await ctx.send(random.choice(responses))
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
     print(f"d12 result {random.choice(responses)}")
+
 
 @bot.command()
 async def d20(ctx):
-    responses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-    await ctx.send(random.choice(responses))
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
     print(f"d20 result {random.choice(responses)}")
+
 
 @bot.command()
 async def d100(ctx):
-    responses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]
-    await ctx.send(random.choice(responses))
+    member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+    responses = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+                 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+                 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+                 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+    await ctx.send(f'{member.mention} {random.choice(responses)}')
     print(f"d100 result {random.choice(responses)}")
+
 
 @bot.event
 async def on_member_join(member):
@@ -69,12 +109,13 @@ async def on_member_join(member):
         if str(channel) == "new-joins-and-boosts":
             await channel.send(f"""Welcome to the server {member.mention}! Please read the rules and get your roles at the roles channel! """)
 
+
 @bot.event
 async def on_raw_reaction_add(payload):
     message_id = payload.message_id
     if message_id == 738557579659313232:
         guild_id = payload.guild_id
-        guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
 
         if payload.emoji.name == 'destiny':
             role = discord.utils.get(guild.roles, name='MMO Player')
@@ -101,12 +142,13 @@ async def on_raw_reaction_add(payload):
         else:
             print("404 Role Not Found")
 
+
 @bot.event
 async def on_raw_reaction_remove(payload):
     message_id = payload.message_id
     if message_id == 738557579659313232:
         guild_id = payload.guild_id
-        guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
 
         if payload.emoji.name == 'destiny':
             role = discord.utils.get(guild.roles, name='MMO Player')
@@ -122,6 +164,112 @@ async def on_raw_reaction_remove(payload):
             role = discord.utils.get(guild.roles, name='Wargaming Games')
         elif payload.emoji.name == 'Checkmark':
             role = discord.utils.get(guild.roles, name='Person')
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.remove_roles(role)
+                print(f"{role} Removed from {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+    if message_id == 741350854577356841:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'green':
+            role = discord.utils.get(guild.roles, name='Green Name')
+        elif payload.emoji.name == 'purple':
+            role = discord.utils.get(guild.roles, name='Purple Name')
+        elif payload.emoji.name == 'red':
+            role = discord.utils.get(guild.roles, name='Red Name')
+        elif payload.emoji.name == 'OrangeHelix':
+            role = discord.utils.get(guild.roles, name='GROSS Name')
+        elif payload.emoji.name == 'BlueShell':
+            role = discord.utils.get(guild.roles, name='Blue Name')
+        elif payload.emoji.name == 'yellow':
+            role = discord.utils.get(guild.roles, name='Yellow Name')
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.add_roles(role)
+                print(f"{role} Added to {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    message_id = payload.message_id
+    if message_id == 741350854577356841:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'green':
+            role = discord.utils.get(guild.roles, name='Green Name')
+        elif payload.emoji.name == 'purple':
+            role = discord.utils.get(guild.roles, name='Purple Name')
+        elif payload.emoji.name == 'red':
+            role = discord.utils.get(guild.roles, name='Red Name')
+        elif payload.emoji.name == 'OrangeHelix':
+            role = discord.utils.get(guild.roles, name='GROSS Name')
+        elif payload.emoji.name == 'BlueShell':
+            role = discord.utils.get(guild.roles, name='Blue Name')
+        elif payload.emoji.name == 'yellow':
+            role = discord.utils.get(guild.roles, name='Yellow Name')
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.remove_roles(role)
+                print(f"{role} Removed from {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+    if message_id == 741363180759941240:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'Blood':
+            role = discord.utils.get(guild.roles, name='Blood Hunter')
+        else:
+            role = discord.utils.get(guild.roles, name=payload.emoji.name)
+
+        if role is not None:
+            member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
+            if member is not None:
+                await member.add_roles(role)
+                print(f"{role} Added to {member}")
+            else:
+                print("404 Member Not Found")
+        else:
+            print("404 Role Not Found")
+
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    message_id = payload.message_id
+    if message_id == 741363180759941240:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
+
+        if payload.emoji.name == 'Blood':
+            role = discord.utils.get(guild.roles, name='Blood Hunter')
+        else:
+            role = discord.utils.get(guild.roles, name=payload.emoji.name)
 
         if role is not None:
             member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
