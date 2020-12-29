@@ -1,0 +1,102 @@
+from discord.ext import commands
+import lavalink
+from discord import utils
+from discord import Embed
+
+
+class MusicCog(commands.Cog):    ##bot.load_extension('cogs.music')
+    def __init__(self, bot):
+        self.bot = bot
+        self.bot.music = lavalink.Client(self.bot.user.id)
+        self.bot.music.add_node('localhost', 7000, 'testing', 'na', 'ZepexNPCMusic')
+        self.bot.add_listener(self.bot.music.voice_update_handler, 'on_socket_response')
+        self.bot.music.add_event_hook(self.track_hook)
+
+
+    @commands.command(name='join')
+    async def join(self, ctx):
+        member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+        vc = member.voice.channel
+        guild_id = ctx.guild.id
+        player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        await self.connect_to(ctx.guild.id, str(vc.id))
+        await player.set_pause(pause=False)
+        print(f"Joined {vc}")
+
+
+    @commands.command(name='play')
+    async def play(self, ctx, *, query):
+        member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+        vc = member.voice.channel
+        print(f'Joined {vc}')
+        member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+        vc = member.voice.channel
+        if member is not None and member.voice is not None:
+            player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+            if not player.is_connected:
+                player.store('channel', ctx.channel.id)
+                await self.connect_to(ctx.guild.id, str(vc.id))
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            query = f'ytsearch:{query}'
+            results = await player.node.get_tracks(query)
+            track = results['tracks'][1]
+            query_result = ''
+            query_result = query_result + f' {track["info"]["title"]} - {track["info"]["uri"]}\n'
+            embed = Embed()
+            embed.description = query_result
+
+            await ctx.channel.send(embed=embed)
+            player.add(requester=ctx.author.id, track=track)
+            if not player.is_playing:
+                await player.play()
+
+        except Exception as error:
+            print(error)
+
+
+    @commands.command(name='skip')
+    async def skip(self, ctx):
+        player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        await player.skip()
+        await ctx.channel.send("Track Skipped!")
+        print("Track Skipped!")
+
+
+    @commands.command(name='pause')
+    async def pause(self, ctx):
+        player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        await player.set_pause(pause= True)
+
+
+    @commands.command(name='unpause')
+    async def unpause(self, ctx):
+        player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        await player.set_pause(pause=False)
+
+
+    @commands.command(name='leave')
+    async def leave(self, ctx):
+        member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+        vc = member.voice.channel
+        guild_id = ctx.guild.id
+        player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        await self.connect_to(guild_id, None)
+        await player.set_pause(pause=True)
+        print(f"Left {vc}")
+
+
+    async def track_hook(self, event):
+        if isinstance(event, lavalink.events.QueueEndEvent):
+            guild_id = int(event.player.guild_id)
+            await self.connect_to(guild_id, None)
+            print("Queue Ended and Left Voice Channel")
+
+
+    async def connect_to(self, guild_id: int, channel_id: str):
+        ws = self.bot._connection._get_websocket(guild_id)
+        await ws.voice_state(str(guild_id), channel_id)
+
+
+def setup(bot):
+    bot.add_cog(MusicCog(bot))
